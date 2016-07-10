@@ -36,24 +36,12 @@ def print_algo(infilename,outfilename, page_size):
 		for line in data:
 			i = i + 1
 			line = line.strip()
-			#words = line.split();
-			#print line[0]
-			#for letter in line:
-				#if letter == ' ' and !starting_space_removed:
-			#print line
 			line = line.replace("	",tab_identifier)
-			#print 'this'
-			#print line
 			line_len =  len(line)
 			total_char_len = line_len * char_width
-			#print total_char_len
 			if total_char_len > max_width:
 				lines_list = create_print_line(line,max_width)
 				for lines in lines_list:
-					#print lines
-					#print '1111111111'
-					#lines = lines.replace(tab_identifier,'\t')
-					#print lines
 					lines = lines.strip()
 					outfile.write(lines)
 					outfile.write('\n')
@@ -67,7 +55,6 @@ def print_algo(infilename,outfilename, page_size):
 				#line = line.replace(tab_identifier,"	")
 				#line = line.replace('&',"	")
 				line = line.strip()
-				line = str(height_ctr) + ' ' + line
 				outfile.write(line)
 				if line_len > 0:
 					line = str(height_ctr) + ' ' + line

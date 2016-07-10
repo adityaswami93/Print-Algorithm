@@ -10,7 +10,7 @@ A4_width = 210
 
 A3_width = 297
 A3_height = 420
-tab_identifier = '&' * 7
+tab_identifier = '    '
 height_ctr = 0
 
 def print_algo(infilename,outfilename, page_size):
@@ -32,8 +32,6 @@ def print_algo(infilename,outfilename, page_size):
 
 	with open(infilename) as f:
 		data = f.readlines()
-
-
 
 		for line in data:
 			i = i + 1
@@ -57,7 +55,6 @@ def print_algo(infilename,outfilename, page_size):
 					#lines = lines.replace(tab_identifier,'\t')
 					#print lines
 					lines = lines.strip()
-					lines = str(height_ctr) + ' ' + lines
 					outfile.write(lines)
 					outfile.write('\n')
 					height_ctr += char_height
@@ -67,8 +64,8 @@ def print_algo(infilename,outfilename, page_size):
 						outfile.write('\n')
 						height_ctr = 0	
 			else:
-				line = line.replace(tab_identifier,"	")
-				line = line.replace('&',"	")
+				#line = line.replace(tab_identifier,"	")
+				#line = line.replace('&',"	")
 				line = line.strip()
 				line = str(height_ctr) + ' ' + line
 				outfile.write(line)
@@ -101,8 +98,8 @@ def create_print_line(line,max_width):
 		print ctr
 		if line[ctr].isspace() == True or line[ctr] == '&':
 			tmp_line = line[start:ctr+1]
-			tmp_line = tmp_line.replace(tab_identifier,"	")
-			tmp_line = tmp_line.replace('&',"	")
+			#tmp_line = tmp_line.replace(tab_identifier,"	")
+			#tmp_line = tmp_line.replace('&',"	")
 			tmp_line = tmp_line.strip()
 			#print 'yes1'
 			#print tmp_line
@@ -119,8 +116,8 @@ def create_print_line(line,max_width):
 			ctr -= 1
 	else:
 		tmp_line = line[start:]
-		tmp_line = tmp_line.replace(tab_identifier,"	")
-		tmp_line = tmp_line.replace('&',"	")
+		#tmp_line = tmp_line.replace(tab_identifier,"	")
+		#tmp_line = tmp_line.replace('&',"	")
 		tmp_line = tmp_line.strip()
 		line_to_print.append(tmp_line)
 

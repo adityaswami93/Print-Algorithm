@@ -10,7 +10,8 @@ A4_width = 210
 
 A3_width = 297
 A3_height = 420
-tab_identifier = '&' * 8
+tab_identifier = '&' * 7
+height_ctr = 0
 
 def print_algo(infilename,outfilename, page_size):
 	i = 0
@@ -42,7 +43,7 @@ def print_algo(infilename,outfilename, page_size):
 			#for letter in line:
 				#if letter == ' ' and !starting_space_removed:
 			#print line
-			line = line.replace("	",'&'*8)
+			line = line.replace("	",tab_identifier)
 			#print 'this'
 			#print line
 			line_len =  len(line)
@@ -56,34 +57,52 @@ def print_algo(infilename,outfilename, page_size):
 					#lines = lines.replace(tab_identifier,'\t')
 					#print lines
 					lines = lines.strip()
+					lines = str(height_ctr) + ' ' + lines
 					outfile.write(lines)
-					outfile.write('\n')	
+					outfile.write('\n')
+					height_ctr += char_height
+					if height_ctr >= max_height:
+						equal_sign = '=' * (max_width/char_width)
+						outfile.write(equal_sign)
+						outfile.write('\n')
+						height_ctr = 0	
 			else:
-				line = line.replace('&'*8,"	")
+				line = line.replace(tab_identifier,"	")
+				line = line.replace('&',"	")
+				line = line.strip()
+				line = str(height_ctr) + ' ' + line
 				outfile.write(line)
 				if line_len > 0:
+					line = str(height_ctr) + ' ' + line
 					outfile.write('\n')
+					height_ctr += char_height
+					if height_ctr >= max_height:
+						equal_sign = '=' * (max_width/char_width)
+						outfile.write(equal_sign)
+						outfile.write('\n')
+						height_ctr = 0
 
-			height_ctr += char_height
-			if height_ctr >= max_height:
-				equal_sign = '=' * (max_width/char_width)
-				outfile.write(equal_sign)
-				outfile.write('\n')
-				height_ctr = 0
+def add_page_break(outfile):
+	if height_ctr >= max_height:
+		equal_sign = '=' * (max_width/char_width)
+		outfile.write(equal_sign)
+		outfile.write('\n')
+		height_ctr = 0
 
 
 def create_print_line(line,max_width):
 	line_to_print = []
 	line_len = len(line)
 	start = 0
-	ctr = max_width/char_width - 1
+	ctr = max_width/char_width
 	#print 'this'
 	#print line
 	while ctr<line_len:
 		print ctr
 		if line[ctr].isspace() == True or line[ctr] == '&':
 			tmp_line = line[start:ctr+1]
-			tmp_line = tmp_line.replace('&'*8,"	")
+			tmp_line = tmp_line.replace(tab_identifier,"	")
+			tmp_line = tmp_line.replace('&',"	")
 			tmp_line = tmp_line.strip()
 			#print 'yes1'
 			#print tmp_line
@@ -100,6 +119,9 @@ def create_print_line(line,max_width):
 			ctr -= 1
 	else:
 		tmp_line = line[start:]
+		tmp_line = tmp_line.replace(tab_identifier,"	")
+		tmp_line = tmp_line.replace('&',"	")
+		tmp_line = tmp_line.strip()
 		line_to_print.append(tmp_line)
 
 	return line_to_print

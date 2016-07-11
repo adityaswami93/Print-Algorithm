@@ -1,7 +1,9 @@
 #!/usr/bin/python
+#Author: Aditya Swami
 
 import sys, getopt
 
+#define all the constansts needed
 char_height = 3;
 char_width = 2;
 
@@ -10,14 +12,11 @@ A4_width = 210
 
 A3_width = 297
 A3_height = 420
-tab_identifier = '    '
+tab_replacer = '    '
 height_ctr = 0
 
 def print_algo(infilename,outfilename, page_size):
-	i = 0
-	starting_space_removed = False
-	width_ctr = 0
-	height_ctr = 0
+	height_ctr = 0														#counter for calculating the page height
 
 	if page_size == 'A3':
 		max_width = A3_width
@@ -34,92 +33,60 @@ def print_algo(infilename,outfilename, page_size):
 		data = f.readlines()
 
 		for line in data:
-			i = i + 1
-			line = line.strip()
-			line = line.replace("	",tab_identifier)
+			print 'printing in progress'								#to indicate that printing in progress
+			line = line.strip()											#remove the spaces at the end
+			line = line.replace("	", tab_replacer)					#replace the tab with 4 spaces
 			line_len =  len(line)
-			total_char_len = line_len * char_width
+			total_char_len = line_len * char_width						# to check if the line width to print is greater than the page width. 
+																		#If it is, then a separate functon is called which breaks the line into smaller widths to fit inside the page.
 			if total_char_len > max_width:
-				lines_list = create_print_line(line,max_width)
+				lines_list = create_print_line(line,max_width)			#the functions will return a list with smaller lines to print
 				for lines in lines_list:
 					lines = lines.strip()
 					outfile.write(lines)
-					outfile.write('\n')
+					outfile.write('\n')		
 					height_ctr += char_height
-					if height_ctr >= max_height:
-						equal_sign = '=' * (max_width/char_width)
-						outfile.write(equal_sign)
-						outfile.write('\n')
+					if height_ctr >= max_height:						#check if the content of the page exceeds page heights and call a function to print equal signs
+						add_page_break(outfile,max_width)
 						height_ctr = 0	
-			else:
-				#line = line.replace(tab_identifier,"	")
-				#line = line.replace('&',"	")
-				line = line.strip()
+			else:														#it is called when the line width is smaller than page width
 				outfile.write(line)
-				if line_len > 0:
-					line = str(height_ctr) + ' ' + line
+				if line_len > 0:										#to account for the case when the line is empty
 					outfile.write('\n')
 					height_ctr += char_height
 					if height_ctr >= max_height:
-						equal_sign = '=' * (max_width/char_width)
-						outfile.write(equal_sign)
-						outfile.write('\n')
-						height_ctr = 0
+						add_page_break(outfile,max_width)
+						height_ctr = 0	
 
-def add_page_break(outfile):
-	if height_ctr >= max_height:
-		equal_sign = '=' * (max_width/char_width)
-		outfile.write(equal_sign)
-		outfile.write('\n')
-		height_ctr = 0
+#function to add equal signs at the end of page
+def add_page_break(outfile,max_width):
+	equal_sign = '=' * (max_width/char_width)
+	outfile.write(equal_sign)
+	outfile.write('\n')
 
-
+#function to break the a line into multiple line for printing when its width is higher than page's width
+#the logic in the functions is that it begins looking at the point 'max_width/char_width' plus an extra space and looks backwards untill a space is encountered. 
+#This is to ensure thats words are not broken up across two lines
 def create_print_line(line,max_width):
 	line_to_print = []
 	line_len = len(line)
 	start = 0
-	ctr = max_width/char_width
-	#print 'this'
-	#print line
+	ctr = max_width/char_width											#counter to keep track of characters in line		
 	while ctr<line_len:
-		print ctr
-		if line[ctr].isspace() == True or line[ctr] == '&':
+		if line[ctr].isspace() == True:
 			tmp_line = line[start:ctr+1]
-			#tmp_line = tmp_line.replace(tab_identifier,"	")
-			#tmp_line = tmp_line.replace('&',"	")
-			tmp_line = tmp_line.strip()
-			#print 'yes1'
-			#print tmp_line
-			#tmp_line.split()
-			start = ctr + 1
+			tmp_line = tmp_line.strip()									#remove the extra space at the end
+			start = ctr + 1												#establish the starting point for the next round
 			line_to_print.append(tmp_line)
-			ctr += max_width/char_width
-
-		#elif line[ctr] == '&':
-			#tmp_line = line[start:ctr-7]
-			#tmp_line = tmp_line.replace('&'*8,"	")
-			#tmp_line = tmp_line.strip()
+			ctr += max_width/char_width									#ctr advances by the max_width/char_width amount
 		else:
 			ctr -= 1
-	else:
-		tmp_line = line[start:]
-		#tmp_line = tmp_line.replace(tab_identifier,"	")
-		#tmp_line = tmp_line.replace('&',"	")
+	else:																#this is called when the characters left in the line are less than max_width/char_width and so it gets the last remaining characters 
+		tmp_line = line[start:]											
 		tmp_line = tmp_line.strip()
 		line_to_print.append(tmp_line)
 
 	return line_to_print
-
-
-def calculate_len(line):
-	total_len = 0
-	for letter in line:
-		if letter == '\t':
-			total_len += 8
-		else:
-			total_len += 1
-	return total_len
-
 
 def usage():
 	print """python printAlgo.py -i <inputfilename> -o <outputfilename> -p <pageSize>"""
